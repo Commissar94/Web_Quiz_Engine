@@ -1,18 +1,19 @@
 package engine;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@AllArgsConstructor
+@ToString
 public class Answer {
 
-    @Getter @Setter
-    Boolean success;
+    @Getter
+    @Setter
+    List<Integer> answer;
 
-    @Getter @Setter
-    String feedback;
-
-    public Answer(Boolean success, String feedback) {
-        this.success = success;
-        this.feedback = feedback;
+    public Answer() {
+        this.answer = new ArrayList<>();
     }
 }

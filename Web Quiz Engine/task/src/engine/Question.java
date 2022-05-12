@@ -3,32 +3,49 @@ package engine;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@ToString
 public class Question {
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static int counter = 0;
 
-    @Getter @Setter
-    int id;
+    @Getter
+    @Setter
+    private int id;
 
-    @Getter @Setter
+    @NotBlank
+    @Getter
+    @Setter
     String title;
 
-    @Getter @Setter
+    @NotBlank
+    @Getter
+    @Setter
     String text;
 
-    @Getter @Setter
+
+    @Getter
+    @Setter
+    @NotNull
+    @Size(min = 2)
     List<String> options;
 
-    @Getter @Setter
+    @Getter
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    int answer;
+    Answer answer;
 
+    public void setAnswer(List<Integer> answer) {
+        if (answer == null || answer.isEmpty()) this.answer = new Answer();
+        this.answer = new Answer(answer);
+    }
 
     public Question() {
-        counter.incrementAndGet();
-        this.id = counter.intValue();
+        if (answer == null) this.answer = new Answer(new ArrayList<>());
     }
 }
