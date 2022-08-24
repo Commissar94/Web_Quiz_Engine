@@ -1,8 +1,7 @@
 package engine.controllers;
 
-import engine.Answer;
-import engine.Result;
 import engine.Question;
+import engine.Result;
 import engine.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class QuizController {
@@ -36,12 +36,25 @@ public class QuizController {
     }
 
     @PostMapping("/api/quizzes/{id}/solve")
-    public Result setAnswer(@PathVariable int id, @RequestBody Answer answer) {
+    public Result setAnswer(@PathVariable int id, @RequestBody String answer) {
 
+
+        String onlyDigitsAnswer = answer.replaceAll("\\D+", "");
+        List<Integer> answerFromUser = new ArrayList<>();
+        for (char digit : onlyDigitsAnswer.toCharArray()) {
+            answerFromUser.add(Integer.parseInt(String.valueOf(digit)));
+        }
+        //answerFromUser.add(Integer.parseInt(onlyDigitsAnswer));
+if (onlyDigitsAnswer.isEmpty())
+        System.out.println(onlyDigitsAnswer);
         Question currentQuestion = questions.get(id - 1);
-        Answer userAnswer = answer;
-        Answer rightAnswer = currentQuestion.getAnswer();
-        return quizService.compareAnswers(userAnswer, rightAnswer);
+        System.out.println(currentQuestion);
+
+        List<Integer> rightAnswer = currentQuestion.getAnswer();
+        System.out.println(rightAnswer);
+        System.out.println(answerFromUser);
+        //return new Result(false,Result.LIE);
+        return quizService.compareAnswers(answerFromUser, rightAnswer);
 
     }
 
@@ -50,6 +63,6 @@ public class QuizController {
         question.setId(questions.size() + 1);
         questions.add(question);
         System.out.println(question);
-        return questions.get(question.getId() - 1);
+        return questions.get((int) (question.getId() - 1));
     }
 }
