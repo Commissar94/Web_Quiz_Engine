@@ -11,16 +11,6 @@ import java.util.Set;
 @Component
 public class QuizService {
 
-//    public Result compareAnswers(Answer userAnswer, Answer rightAnswer) {
-//
-//
-////        Set<Integer> userSet = new HashSet<>(userAnswer.getAnswer());
-////        Set<Integer> rightSet = new HashSet<>(rightAnswer.getAnswer());
-//
-////        if (userSet.equals(rightSet)) return new Result(true, Result.TRUTH);
-////        else return new Result(false, Result.LIE);
-//    }
-
     public Result compareAnswers(List<Integer> userAnswer, List<Integer> rightAnswer){
 
         if (userAnswer == null) userAnswer = new ArrayList<>();

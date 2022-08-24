@@ -4,25 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.lang.NonNull;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 @ToString
 @Entity
 public class Question {
-    private static int counter = 0;
 
     @Getter
     @Setter
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @NotBlank
@@ -46,21 +42,10 @@ public class Question {
     @Getter
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ElementCollection
-    //Answer answer;
     List<Integer> answer;
 
-//    public void setAnswer(List<Integer> answer) {
-//        if (answer == null || answer.isEmpty()){
-//            this.answer = new ArrayList<>();
-//            System.out.println("EMPTYYYYYY");
-//        }
-//        else {
-//            System.out.println("NOT EMPTYYY");
-//            this.answer = new ArrayList<>(answer);
-//        }
-//    }
 
     public Question() {
-        //if (answer == null) this.answer = new Answer(new ArrayList<>());
+
     }
 }

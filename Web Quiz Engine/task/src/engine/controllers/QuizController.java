@@ -2,6 +2,7 @@ package engine.controllers;
 
 import engine.Question;
 import engine.Result;
+import engine.repository.QuestionsRepository;
 import engine.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,51 +19,43 @@ public class QuizController {
     @Autowired
     QuizService quizService;
 
-    List<Question> questions = new ArrayList<>();
+    @Autowired
+    QuestionsRepository repository;
 
     @GetMapping("/api/quizzes/{id}")
-    public Question getQuestion(@PathVariable int id) {
+    public Question getQuestion(@PathVariable long id) {
 
-        if (id > questions.size()) {
+        if (id > repository.count() || id <= 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No quiz");
         }
-        return questions.get(id - 1);
+        return repository.findById(id).get();
 
     }
 
     @GetMapping("/api/quizzes")
     public List<Question> getQuestions() {
-        return questions;
+        return (List<Question>) repository.findAll();
     }
 
     @PostMapping("/api/quizzes/{id}/solve")
-    public Result setAnswer(@PathVariable int id, @RequestBody String answer) {
-
+    public Result setAnswer(@PathVariable long id, @RequestBody String answer) {
 
         String onlyDigitsAnswer = answer.replaceAll("\\D+", "");
         List<Integer> answerFromUser = new ArrayList<>();
         for (char digit : onlyDigitsAnswer.toCharArray()) {
             answerFromUser.add(Integer.parseInt(String.valueOf(digit)));
         }
-        //answerFromUser.add(Integer.parseInt(onlyDigitsAnswer));
-if (onlyDigitsAnswer.isEmpty())
-        System.out.println(onlyDigitsAnswer);
-        Question currentQuestion = questions.get(id - 1);
-        System.out.println(currentQuestion);
-
+        Question currentQuestion = repository.findById(id).get();
         List<Integer> rightAnswer = currentQuestion.getAnswer();
-        System.out.println(rightAnswer);
-        System.out.println(answerFromUser);
-        //return new Result(false,Result.LIE);
         return quizService.compareAnswers(answerFromUser, rightAnswer);
 
     }
 
     @PostMapping("/api/quizzes")
     public Question addQuiz(@Valid @RequestBody Question question) {
-        question.setId(questions.size() + 1);
-        questions.add(question);
+        question.setId(repository.count() + 1);
         System.out.println(question);
-        return questions.get((int) (question.getId() - 1));
+        repository.save(question);
+        return repository.findById(question.getId()).get();
     }
 }
