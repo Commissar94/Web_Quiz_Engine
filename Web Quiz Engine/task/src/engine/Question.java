@@ -1,6 +1,7 @@
 package engine;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import engine.security.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,9 +18,18 @@ public class Question {
 
     @Getter
     @Setter
+    @SequenceGenerator(name="question_generator", allocationSize=1)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE,
+            generator="question_generator")
     private long id;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @Getter
+    @Setter
+    private User user;
 
     @NotBlank
     @Getter
@@ -40,12 +50,8 @@ public class Question {
     List<String> options;
 
     @Getter
+    @Setter
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ElementCollection
     List<Integer> answer;
-
-
-    public Question() {
-
-    }
 }
