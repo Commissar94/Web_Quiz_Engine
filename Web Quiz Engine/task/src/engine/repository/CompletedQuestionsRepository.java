@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface CompletedQuestionsRepository extends JpaRepository<CompletedQuestions,Long> {
 
 
-    @Query("SELECT u FROM CompletedQuestions u WHERE u.userId = ?1")
+    @Query("SELECT c FROM CompletedQuestions c WHERE c.userId = :userId order by c.completedAt desc")
     Page<CompletedQuestions> findAllByUserIdWithPaginationOrderByCompletedAtDesc(long userId, Pageable pageable);
 
 }

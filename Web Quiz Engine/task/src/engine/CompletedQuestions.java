@@ -21,7 +21,6 @@ public class CompletedQuestions {
 
     @Getter
     @Setter
-    @Column(name = "id")
     private long id;
 
     @Getter
@@ -31,6 +30,5 @@ public class CompletedQuestions {
     @Getter
     @Setter
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "user_id")
     private long userId;
 }

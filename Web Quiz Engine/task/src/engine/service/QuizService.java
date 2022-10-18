@@ -31,9 +31,9 @@ public class QuizService {
         return questionsRepository.findAll(paging);
     }
 
-    public Page<CompletedQuestions> getAllCompletedQuestions(Integer pageNo, Integer pageSize, String sortBy, User user) {
+    public Page<CompletedQuestions> getAllCompletedQuestions(Integer page, Integer pageSize, User user) {
 
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.Direction.DESC, "completedAt");
+        Pageable paging = PageRequest.of(page, pageSize);
 
         return completedQuestionsRepository.findAllByUserIdWithPaginationOrderByCompletedAtDesc(user.getId(), paging);
     }

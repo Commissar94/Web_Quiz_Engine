@@ -107,9 +107,8 @@ public class QuizController {
     public Page<CompletedQuestions> getCompletedQuestions(
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "completedAt") String sortBy) {
+            @RequestParam(defaultValue = "10") Integer pageSize) {
 
-        return quizService.getAllCompletedQuestions(page, pageSize, sortBy, user);
+        return quizService.getAllCompletedQuestions(page, pageSize, user);
     }
 }
