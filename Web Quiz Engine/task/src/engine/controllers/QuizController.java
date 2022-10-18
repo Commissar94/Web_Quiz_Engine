@@ -1,8 +1,10 @@
 package engine.controllers;
 
+import engine.CompletedQuestions;
 import engine.Question;
 import engine.Result;
 import engine.repository.UserRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -69,12 +71,17 @@ public class QuizController {
     }
 
     @GetMapping("/api/quizzes")
-    public List<Question> getQuestions() {
-        return (List<Question>) questionsRepository.findAll();
+    public Page<Question> getQuestions(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        return quizService.getAllQuestions(page, pageSize, sortBy);
     }
 
     @PostMapping("/api/quizzes/{id}/solve")
-    public Result setAnswer(@PathVariable long id, @RequestBody String answer) {
+    public Result setAnswer(@PathVariable long id, @RequestBody String answer,
+                            @AuthenticationPrincipal User user) {
 
         String onlyDigitsAnswer = answer.replaceAll("\\D+", "");
         List<Integer> answerFromUser = new ArrayList<>();
@@ -83,7 +90,9 @@ public class QuizController {
         }
         Question currentQuestion = questionsRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         List<Integer> rightAnswer = currentQuestion.getAnswer();
-        return quizService.compareAnswers(answerFromUser, rightAnswer);
+        Result result = quizService.compareAnswers(answerFromUser, rightAnswer);
+        quizService.saveTimeOfCompletedQuestion(result, id, user.getId());
+        return result;
 
     }
 
@@ -92,5 +101,15 @@ public class QuizController {
                             @AuthenticationPrincipal User user) {
         question.setUser(user);
         return questionsRepository.save(question);
+    }
+
+    @GetMapping("/api/quizzes/completed")
+    public Page<CompletedQuestions> getCompletedQuestions(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "completedAt") String sortBy) {
+
+        return quizService.getAllCompletedQuestions(page, pageSize, sortBy, user);
     }
 }
